@@ -8,7 +8,8 @@ export default class Play extends Phaser.Scene {
   right?: Phaser.Input.Keyboard.Key;
 
   starfield?: Phaser.GameObjects.TileSprite;
-  spinner?: Phaser.GameObjects.Shape;
+  player?: Phaser.GameObjects.Shape;
+  enemy?: Phaser.GameObjects.Shape;
 
   rotationSpeed = Phaser.Math.PI2 / 1000; // radians per millisecond
   isFiring = false;
@@ -16,6 +17,8 @@ export default class Play extends Phaser.Scene {
 
   startY = 400;
   thresholdY = 50;
+
+  enemyStartX = 500;
 
   constructor() {
     super("play");
@@ -46,7 +49,14 @@ export default class Play extends Phaser.Scene {
       )
       .setOrigin(0, 0);
 
-    this.spinner = this.add.rectangle(100, this.startY, 50, 50, 0xc686b5);
+    this.player = this.add.rectangle(100, this.startY, 50, 50, 0xc686b5);
+    this.enemy = this.add.rectangle(
+      this.enemyStartX,
+      this.thresholdY,
+      50,
+      50,
+      0xff0000,
+    );
   }
 
   update(_timeMs: number, delta: number) {
@@ -54,9 +64,9 @@ export default class Play extends Phaser.Scene {
 
     if (!this.isFiring) {
       if (this.left!.isDown) {
-        this.spinner!.x -= delta * this.moveSpeed;
+        this.player!.x -= delta * this.moveSpeed;
       } else if (this.right!.isDown) {
-        this.spinner!.x += delta * this.moveSpeed;
+        this.player!.x += delta * this.moveSpeed;
       }
     }
 
@@ -64,17 +74,17 @@ export default class Play extends Phaser.Scene {
       this.isFiring = true;
     }
 
-    if (this.isFiring && this.spinner!.y >= this.thresholdY) {
-      this.spinner!.y -= delta * this.moveSpeed;
+    if (this.isFiring && this.player!.y >= this.thresholdY) {
+      this.player!.y -= delta * this.moveSpeed;
     }
 
-    if (this.spinner!.y <= this.thresholdY) {
-      this.reset();
+    if (this.player!.y <= this.thresholdY) {
+      this.resetPlayer();
     }
   }
 
-  reset() {
+  resetPlayer() {
     this.isFiring = false;
-    this.spinner!.y = this.startY;
+    this.player!.y = this.startY;
   }
 }
