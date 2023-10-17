@@ -18,7 +18,7 @@ export default class Play extends Phaser.Scene {
   startY = 400;
   thresholdY = 50;
 
-  enemyStartX = 500;
+  enemyStartX = 600;
 
   constructor() {
     super("play");
@@ -62,6 +62,11 @@ export default class Play extends Phaser.Scene {
   update(_timeMs: number, delta: number) {
     this.starfield!.tilePositionX -= 4;
 
+    this.updatePlayer(delta);
+    this.updateEnemy(delta);
+  }
+
+  updatePlayer(delta: number) {
     if (!this.isFiring) {
       if (this.left!.isDown) {
         this.player!.x -= delta * this.moveSpeed;
@@ -86,5 +91,17 @@ export default class Play extends Phaser.Scene {
   resetPlayer() {
     this.isFiring = false;
     this.player!.y = this.startY;
+  }
+
+  updateEnemy(delta: number) {
+    this.enemy!.x -= delta * this.moveSpeed;
+
+    if (this.enemy!.x <= 0 - this.enemy!.width) {
+      this.resetEnemy();
+    }
+  }
+
+  resetEnemy() {
+    this.enemy!.x = this.enemyStartX;
   }
 }
